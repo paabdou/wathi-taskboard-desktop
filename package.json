@@ -1,7 +1,7 @@
 {
   "name": "wathi-taskboard-desktop",
   "productName": "WATHI TaskBoard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application de bureau WATHI TaskBoard pour Mac et Windows",
   "private": true,
   "main": "main.js",

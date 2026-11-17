@@ -6,6 +6,8 @@ productName: WATHI TaskBoard
 copyright: © WATHI
 artifactName: WATHI-TaskBoard-${os}-${arch}.${ext}
 
+afterPack: scripts/adhoc-sign.cjs
+
 directories:
   buildResources: build
   output: dist
@@ -28,7 +30,9 @@ mac:
   category: public.app-category.productivity
   icon: build/icon.png
   darkModeSupport: true
-  # Pas de compte Apple Developer pour l'instant : application non signée.
+  # Pas de compte Apple Developer pour l'instant : pas d'identité de signature.
+  # L'app est tout de même signée « ad hoc » par le hook ci-dessous, sans quoi
+  # macOS refuse ses notifications système.
   identity: null
   hardenedRuntime: false
   gatekeeperAssess: false

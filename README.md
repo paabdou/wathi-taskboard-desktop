@@ -5,7 +5,7 @@ Application de bureau Electron : une fenêtre native autour de https://wathi-tas
 ## Ce que l'app ajoute au site
 
 - **Notifications système** quand une tâche vous est assignée (depuis l'app ou depuis Slack) ou réassignée vers vous. Un clic ramène la fenêtre.
-- **Pastille** sur l'icône du Dock (macOS, avec le nombre) ou de la barre des tâches (Windows) : vos tâches en retard ou à rendre aujourd'hui.
+- **Pastille** sur l'icône du Dock (macOS, avec le nombre) ou de la barre des tâches (Windows) : tâches reçues depuis votre dernière visite (d'un collègue ou de Slack), en retard ou à rendre aujourd'hui. Elle s'efface quand vous revenez sur la fenêtre, sauf pour les échéances.
 - **Icône de barre de menus** (macOS) ou de zone de notification (Windows) : ouvrir, nouvelle tâche, rechercher une mise à jour, quitter. Fermer la fenêtre ne quitte pas l'app.
 - **Raccourcis** : `⌘⇧T` / `Ctrl⇧T` pour ouvrir la fenêtre depuis n'importe où, `⌘N` / `Ctrl+N` pour une nouvelle tâche.
 - Les liens externes (Slack, documents) s'ouvrent dans le navigateur ; l'app reste sur son domaine.
@@ -34,7 +34,8 @@ npm run build:win   # dist/WATHI-TaskBoard-win-x64.exe (sur Windows, ou via GitH
 
 L'application n'est pas signée (pas de compte Apple Developer ni de certificat Windows pour l'instant) :
 
-- **macOS** bloque la première ouverture d'une app téléchargée non signée. L'utilisateur va dans Réglages Système › Confidentialité et sécurité et clique sur « Ouvrir quand même ». Une seule fois.
+- **macOS** : l'app reçoit une signature « ad hoc » au build (hook `scripts/adhoc-sign.cjs`), sans compte Apple. C'est indispensable pour que les notifications système s'affichent : macOS refuse celles d'une app non signée. Lors de la première notification, macOS demande l'autorisation ; on peut la revoir dans Réglages Système › Notifications › WATHI TaskBoard.
+- **macOS** bloque la première ouverture d'une app téléchargée non notarisée. L'utilisateur va dans Réglages Système › Confidentialité et sécurité et clique sur « Ouvrir quand même ». Une seule fois.
 - **Windows** affiche SmartScreen : « Informations complémentaires » puis « Exécuter quand même ».
 - La mise à jour automatique fonctionne sur Windows. Sur macOS, elle exige une signature Apple : l'app prévient qu'une nouvelle version existe et renvoie vers la page de téléchargement.
 
