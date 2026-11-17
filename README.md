@@ -53,7 +53,16 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
-GitHub Actions (`.github/workflows/release.yml`) construit les deux installeurs et les publie dans la release `v1.0.1`. Les utilisateurs Windows reçoivent la mise à jour automatiquement ; les utilisateurs Mac sont invités à télécharger.
+GitHub Actions (`.github/workflows/release.yml`) construit les deux installeurs et les publie dans la release `v1.0.1`.
+
+Sans GitHub Actions (compte bloqué, quota épuisé), tout se fait depuis un Mac :
+
+```bash
+npm run build:all                      # dist/ : .dmg universel et .exe Windows
+GH_TOKEN=<jeton> npm run publish:local # crée la release vX.Y.Z et y dépose les fichiers
+```
+
+Le jeton est un jeton GitHub à granularité fine avec « Contents : Read and write » sur ce dépôt. Ne le collez jamais ailleurs que dans cette commande. Les utilisateurs Windows reçoivent la mise à jour automatiquement ; les utilisateurs Mac sont invités à télécharger.
 
 Le code du site (Next.js, privé) vit dans un autre dépôt ; il détecte l'app grâce au pont `window.taskboardDesktop` (voir `preload.js`).
 
