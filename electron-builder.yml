@@ -16,6 +16,7 @@ files:
   - main.js
   - preload.js
   - updater.js
+  - deep-link.js
   - offline.html
   - assets/**
   - package.json
