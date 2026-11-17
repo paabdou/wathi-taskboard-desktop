@@ -1,0 +1,67 @@
+# Construit les installeurs Mac (universel) et Windows, et les publie dans les
+# Releases de ce dépôt. Sur un dépôt public, GitHub Actions est gratuit.
+#
+# Déclenchement : un tag « vX.Y.Z » (la version doit correspondre à package.json),
+# ou manuellement depuis l'onglet Actions.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            os: macos-latest
+            args: --mac
+          - name: Windows
+            os: windows-latest
+            args: --win
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Vérifier que le tag correspond à la version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          version=$(node -p "require('./package.json').version")
+          tag="${GITHUB_REF#refs/tags/v}"
+          if [ "$version" != "$tag" ]; then
+            echo "Le tag v$tag ne correspond pas à la version $version de package.json" >&2
+            exit 1
+          fi
+
+      - name: Construire et publier
+        run: npx electron-builder ${{ matrix.args }} --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Conserver les installeurs comme artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: installeur-${{ matrix.name }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+            dist/latest*.yml
+          if-no-files-found: ignore

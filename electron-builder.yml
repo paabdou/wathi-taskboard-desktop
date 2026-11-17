@@ -1,0 +1,57 @@
+# Construction des installeurs (npm run build dans desktop/).
+# Les installeurs sont publiés dans les Releases d'un dépôt GitHub public dédié,
+# que l'app interroge pour se mettre à jour.
+appId: org.wathi.taskboard
+productName: WATHI TaskBoard
+copyright: © WATHI
+artifactName: WATHI-TaskBoard-${os}-${arch}.${ext}
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - main.js
+  - preload.js
+  - updater.js
+  - offline.html
+  - assets/**
+  - package.json
+
+publish:
+  provider: github
+  owner: paabdou
+  repo: wathi-taskboard-desktop
+  releaseType: release
+
+mac:
+  category: public.app-category.productivity
+  icon: build/icon.png
+  darkModeSupport: true
+  # Pas de compte Apple Developer pour l'instant : application non signée.
+  identity: null
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  target:
+    - target: dmg
+      arch: [universal]
+
+dmg:
+  sign: false
+  contents:
+    - { x: 130, y: 220 }
+    - { x: 410, y: 220, type: link, path: /Applications }
+
+win:
+  icon: build/icon.png
+  verifyUpdateCodeSignature: false
+  target:
+    - target: nsis
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: WATHI TaskBoard
+  language: 1036
