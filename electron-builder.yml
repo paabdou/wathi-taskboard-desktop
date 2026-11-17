@@ -20,6 +20,11 @@ files:
   - assets/**
   - package.json
 
+# Schéma d'adresse wathi-taskboard:// : lien de confirmation d'e-mail ouvert dans l'app.
+protocols:
+  - name: WATHI TaskBoard
+    schemes: [wathi-taskboard]
+
 publish:
   provider: github
   owner: paabdou

@@ -1,13 +1,14 @@
 {
   "name": "wathi-taskboard-desktop",
   "productName": "WATHI TaskBoard",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Application de bureau WATHI TaskBoard pour Mac et Windows",
   "private": true,
   "main": "main.js",
   "author": "WATHI",
   "license": "MIT",
   "scripts": {
+    "test": "node --test test/",
     "start": "electron .",
     "pack": "electron-builder --dir",
     "build": "electron-builder",

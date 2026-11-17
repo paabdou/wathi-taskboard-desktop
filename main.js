@@ -5,6 +5,7 @@
 // raccourci global et mise à jour automatique (voir updater.js).
 
 const { app, BrowserWindow, Menu, Tray, nativeImage, shell, Notification, ipcMain, globalShortcut } = require('electron')
+const { SCHEME, parseDeepLink, deepLinkFromArgv } = require('./deep-link')
 const path = require('node:path')
 const fs = require('node:fs')
 const { setupUpdater, checkForUpdates } = require('./updater')
@@ -26,7 +27,10 @@ app.setAppUserModelId('org.wathi.taskboard')
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.on('second-instance', () => showWindow())
+  app.on('second-instance', (_event, argv) => {
+    showWindow()
+    handleDeepLink(deepLinkFromArgv(argv))
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -237,6 +241,29 @@ ipcMain.on('retry', () => {
 ipcMain.handle('version', () => app.getVersion())
 
 // ---------------------------------------------------------------------------
+// Liens profonds wathi-taskboard:// (confirmation d'e-mail…)
+// ---------------------------------------------------------------------------
+
+let pendingDeepLink = null
+
+function handleDeepLink(rawUrl) {
+  const target = parseDeepLink(rawUrl, APP_URL)
+  if (!target) return
+  if (!app.isReady()) {
+    pendingDeepLink = rawUrl
+    return
+  }
+  showWindow()
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.loadURL(target)
+}
+
+// macOS : le système transmet le lien à l'instance en cours (ou le lance).
+app.on('open-url', (event, url) => {
+  event.preventDefault()
+  handleDeepLink(url)
+})
+
+// ---------------------------------------------------------------------------
 // Cycle de vie
 // ---------------------------------------------------------------------------
 
@@ -250,6 +277,12 @@ app.whenReady().then(() => {
     // raccourci déjà pris par une autre application
   }
   setupUpdater({ appUrl: APP_URL, getWindow: () => mainWindow })
+  // Enregistre wathi-taskboard:// (sur macOS, déjà déclaré par l'installeur).
+  if (app.isPackaged) app.setAsDefaultProtocolClient(SCHEME)
+  // Lien reçu avant que l'app soit prête (macOS) ou passé au lancement (Windows, Linux).
+  const initial = pendingDeepLink || deepLinkFromArgv(process.argv)
+  pendingDeepLink = null
+  if (initial) handleDeepLink(initial)
 })
 
 app.on('activate', () => showWindow())

@@ -10,6 +10,7 @@ Application de bureau Electron : une fenêtre native autour de https://wathi-tas
 - **Raccourcis** : `⌘⇧T` / `Ctrl⇧T` pour ouvrir la fenêtre depuis n'importe où, `⌘N` / `Ctrl+N` pour une nouvelle tâche.
 - Les liens externes (Slack, documents) s'ouvrent dans le navigateur ; l'app reste sur son domaine.
 - Page hors ligne avec bouton « Réessayer » quand le site est injoignable.
+- **Lien de confirmation d'e-mail** : l'app enregistre le schéma `wathi-taskboard://`. Depuis la page de confirmation du site, « Ouvrir dans l'application de bureau » transmet le jeton à l'app (`deep-link.js`), qui valide l'adresse et ouvre la session dans sa fenêtre. Seules les destinations connues sont acceptées.
 
 Le site détecte l'app grâce au pont `window.taskboardDesktop` exposé par `preload.js`.
 
@@ -74,6 +75,7 @@ Le code du site (Next.js, privé) vit dans un autre dépôt ; il détecte l'app 
 | `main.js` | Processus principal : fenêtre, menu, barre de menus, raccourci, pont IPC |
 | `preload.js` | Pont `window.taskboardDesktop` exposé à la page |
 | `updater.js` | Vérification et installation des mises à jour |
+| `deep-link.js` | Liens `wathi-taskboard://` acceptés et leur traduction en pages du site (`npm test`) |
 | `offline.html` | Page affichée quand le site est injoignable |
 | `electron-builder.yml` | Cibles, icônes, publication |
 | `build/icon.png` | Icône de l'app (1024 px), convertie automatiquement en .icns et .ico |
